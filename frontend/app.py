@@ -15,7 +15,7 @@ menu = st.sidebar.selectbox(
 st.title('End-to-End AutoML Project: Insurance Cross-Sell')
 
 if menu == "Prediction":
-    endpoint = 'http://192.168.2.83:8000/predict'
+    endpoint = 'http://192.168.56.101:8000/predict'
     test_csv = st.file_uploader('', type=['csv'], accept_multiple_files=False)
 
     if test_csv:
@@ -75,7 +75,7 @@ elif menu == "Training":
                     }
                     try:
                         response = requests.post(
-                            'http://192.168.2.83:8000/train',
+                            'http://192.168.56.101:8000/train',
                             files=files,
                             data=data,
                             timeout=8000
