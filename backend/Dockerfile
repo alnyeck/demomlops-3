@@ -1,23 +1,27 @@
-# Set base image (Python 3.9)
-FROM python:3.9
+# Exemple de Dockerfile pour le backend (backend/Dockerfile)
 
-# Set working directory
+FROM python:3.9-slim
+
+# 1) Installer Java et les dépendances système pour psycopg2
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+       default-jre \
+       gcc \
+       libpq-dev \
+       python3-dev && \
+    rm -rf /var/lib/apt/lists/*
+
 WORKDIR /app
 
-# Install Java (JRE) in container since H2O uses Java
-RUN apt-get update && apt-get install -y default-jre
-
-# Copy list of backend requirements
+# 2) Copier et installer les requirements Python (y compris psycopg2-binary si nécessaire)
 COPY requirements-backend.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt psycopg2-binary
 
-# Install dependencies
-RUN pip install -r requirements.txt
-
-# Copy files to working directory (into a newly created /app directory)
+# 3) Copier le code de votre API/backend dans le conteneur
 COPY . /app
 
-# Expose port
+# 4) Exposer le port de l’API (FastAPI/Uvicorn)
 EXPOSE 8000
 
-# Execute command when container starts
+# 5) Commande de lancement du serveur Uvicorn
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
